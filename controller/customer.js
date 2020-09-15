@@ -39,7 +39,9 @@ exports.signup = (req, res, next) => {
         res.status(200).json({
             token:token, 
             userId:result._id.toString(), 
-            email:result.email})
+            email:result.email,
+            name:result.name
+        })
     })
     .catch(err => {
         if(!err.statusCode){
@@ -73,9 +75,9 @@ exports.login = (req, res, next) => {
             userId:loadeduser._id.toString()
         }, 
         'supersecret', 
-        {expiresIn: '1h'}
+        {expiresIn: '24h'}
         );
-        res.status(200).json({token:token, userId:loadeduser._id.toString(), email:loadeduser.email})
+        res.status(200).json({token:token, userId:loadeduser._id.toString(), email:loadeduser.email, name:loadeduser.name})
     })
     .catch(err => {
         if(!err.statusCode){
