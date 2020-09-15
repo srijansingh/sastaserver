@@ -87,7 +87,7 @@ exports.login = (req, res, next) => {
 
 
 exports.fetchCategory = (req, res, next) => {
-    Product.distinct("category")
+    Product.find()
     .then(result => {
         console.log(result);
         res.status(200).json({
