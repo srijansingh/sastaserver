@@ -90,6 +90,7 @@ exports.login = (req, res, next) => {
 
 exports.fetchCategory = (req, res, next) => {
     Product.find()
+    .sort({ _id: -1 })
     .then(result => {
         console.log(result);
         res.status(200).json({
