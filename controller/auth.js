@@ -73,3 +73,60 @@ exports.login = (req, res, next) => {
         next(err);
     })
 }
+
+
+
+exports.password = (req, res, next) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const newPassword = req.body.newpassword;
+
+    Admin.findOne({email:email})
+    .then(user => {
+        if(!user){
+            const error = new Error('Email not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        loadeduser = user;
+        return bcrypt.compare(password, user.password);
+    })
+    .then(isEqual => {
+        if(!isEqual){
+            const error = new Error('Wrong Password');
+            error.statusCode = 401;
+            throw error;
+        }
+        bcrypt.hash(newPassword,12)
+        .then(hashPwd => {
+            Admin.update(
+                { email: email },
+                {
+                    $set: {
+                     password: hashPwd
+                    }
+                }
+             )
+             .then(result => {
+                if(!result){
+                    const error = new Error('FAILED');
+                    error.statusCode = 401;
+                    throw error;
+                }
+                res.status(200).json({
+                    message : "SUCCESS"
+                })
+            })
+        }) 
+    })
+    .catch(err => {
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+
+        res.json({
+            error:err
+        })
+        next(err);
+    })
+}
